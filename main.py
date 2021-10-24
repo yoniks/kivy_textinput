@@ -26,7 +26,7 @@ class MyFirstWidget(RelativeLayout):
 
     def check_status(self):  # kivy TextInput hebrew support
 
-        # col, row = self.txt_input.cursor
+         # col, row = self.txt_input.cursor
         vb = self.txt_input.cursor_index()
         col, row = self.txt_input.get_cursor_from_index(vb)
         lan_text = self.txt_input._lines[row]
