@@ -5,9 +5,6 @@ from kivy.lang import Builder
 from unidecode import unidecode
 from kivy.properties import ConfigParserProperty, ConfigParser, StringProperty, NumericProperty, ObjectProperty
 from functools import partial
-from kivy.uix.boxlayout import BoxLayout
-import os
-import sys
 
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.textinput import TextInput
@@ -15,50 +12,59 @@ from kivy.uix.textinput import TextInput
 Builder.load_file('editor_text.kv')
 
 
-class MyFirstWidget(RelativeLayout):
+class MyWidget(RelativeLayout):
     txt_input = ObjectProperty(None)
-    writing = StringProperty('')
-    index_char = NumericProperty(0)
+    new_lines = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super().__init__()
         self.focus = True
+        self.new_lines = 0
+        # Clock.schedule_once(partial(self.set_cursor, self.txt_input, col, row), 1)
 
     def check_status(self):  # kivy TextInput hebrew support
+        Clock.schedule_once(partial(self.set_cursor, self.txt_input), 0.0)
+        Clock.schedule_once(partial(self.new_line, self.txt_input), 0.1)
 
-         # col, row = self.txt_input.cursor
-        vb = self.txt_input.cursor_index()
-        col, row = self.txt_input.get_cursor_from_index(vb)
-        lan_text = self.txt_input._lines[row]
+    def set_cursor(self, instance, dt):
+        """RTL or LTR it is doesn't matter,it is for language HEBREW or other 
+        ,it's set the cursor to index-1 if your language of chars  written right to left,
+           it's mean cursor move to left of text and change the default of the right ."""
+        vb = instance.cursor_index()
+        col, row = instance.get_cursor_from_index(vb)
+        instance.cursor = (col - 1, row)  # when you input is cursor go right text mean to bigger index so
+        # col-1 back it to left of 1 index
+        return
 
-        # print("point code: ", ord(lan_text[col]))
-        print(vb, col, row)
+    def new_line(self, instance, dt):
+        """after the result, if you
+           input "." so open new line,
+            it mean end text Hebrew of cursor is left side and not right so i can't enter to
+           new line i should add \n to it,
+         """
+        vb = instance.cursor_index()
+        col, row = instance.get_cursor_from_index(vb)
+        num_letters = instance._lines[row]
+        print(col, row)
 
-        if len(lan_text) > col:
-            point_code = ord(lan_text[col])
-            if point_code == 32:  # if it's space
-                return
-            elif point_code == 58 | 10:  # if it's ':' or 'enter',for new line with '˅' or '˄'
-                return
-            elif point_code == 46:
-                Clock.schedule_once(partial(self.set_cursor, self.txt_input,
-                                            len(self.txt_input.text) + 1, row), 0)
-            else:
-                Clock.schedule_once(partial(self.set_cursor, self.txt_input, col, row), 0)
-        else:
-            Clock.schedule_once(partial(self.set_cursor, self.txt_input, col, row), 0)
-
-    def set_cursor(self, instance, col, row, dt):
-        l = self.txt_input.cursor_index()
-        key = self.txt_input.cursor_offset()
-        print("col: ", key, l)
-        if key != 0:
-            instance.cursor = (col, row)
+        if len(num_letters) > 1:  # if more one char
+            print(num_letters[0], num_letters[col])
+            print("point code: ", ord(num_letters[0]))
+            code_point = ord(num_letters[col])
+        else:  # else it just one char
+            print(num_letters)
+            code_point = num_letters
+        print(code_point)
+        if code_point == 46 or code_point == '.':  # if input "." cursor go to end line and than enter to new line
+            # instance.cursor = (len(num_letters), row)
+            instance.text += "\n"
+            print("bigger", type(instance.text))
+        self.new_lines = row
 
 
 class Application(App):
     def build(self):
-        return MyFirstWidget()
+        return MyWidget()
 
 
 if __name__ == '__main__':
