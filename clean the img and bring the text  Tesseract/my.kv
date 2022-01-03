@@ -1,0 +1,140 @@
+<ScanFile>:
+    txt_input: txt_input # have to add ObjectProperty at main for ref
+    text_input: text_input
+
+    BoxLayout:
+        orientation: 'vertical'
+        canvas:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        FloatLayout:
+            orientation: 'horizontal'
+            #size_hint: 0.999, 0.5 same
+            size_hint_y: 0.5
+
+            canvas:
+                Color:
+                    rgba: 0, 1, 0, 0.5
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                size_hint: .2, .5 # x, y
+                pos_hint: {'center_x': 0.4,'top': 0.75}
+                text: 'Load'
+                background_color: 0, 1, 1, 1
+                on_press: root.show_load()
+            Button:
+                size_hint: 0.2, 0.5
+                pos_hint: {'center_x': 0.6,'top': 0.75}
+                text: 'Menu'
+                background_color: 0, 1, 1, 1
+                on_press: root.test()
+        FloatLayout:
+            orientation: 'horizontal'
+            Label:
+                id: loi
+                size_hint: 0.2, 0.3
+                pos_hint: {'center_x': 0.02,'top': 0.95}
+                text: '1'
+                color: 0,1,0,1
+                font_size: 25
+            TextInput:
+                id: txt_input
+                text: ''
+                base_direction: 'rtl'#'weak_rtl'
+                font_name: 'front/Arial.ttf'
+                on_focus: self.insert_text("" if args[1] else "")
+                size_hint: 0.9, 0.99
+                pos_hint: {'center_x':0.5, 'top':0.99}
+                focus: True
+                #color: root.text_colour
+
+        FloatLayout:
+            orientation: 'vertical'
+            size_hint_y: 0.5# cut 50% from default size Y
+            Label:
+                text: 'result text'
+                color: 0,1,0,1
+                size_hint: 0.2, 0.3
+                pos_hint: {'center_x': 0.5,'top': 0.95}
+                font_size: 25
+        FloatLayout:
+            orientation: 'horizontal'
+            TextInput:
+                id: text_input
+                text: ''
+                base_direction: 'rtl'
+                font_name: 'front/Arial.ttf'
+                size_hint: 0.9, 0.99
+                pos_hint: {'center_x': 0.5, 'top': 0.99}
+                focus: True
+                #color: root.text_colour
+        FloatLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'goTo menu'
+                on_press:
+                    root.manager.transition.direction = 'right'
+                    root.manager.current = 'menu'
+                size_hint: 0.2, 0.3
+                pos_hint: {'center_x': 0.5, 'top': 0.90}
+
+
+<Contracts>:
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+        FloatLayout:
+            orientation: 'horizontal'
+            Button:
+                size_hint: .2, .1 # x, y
+                pos_hint: {'x': 0.3,'top': 0.91}
+                text: 'contracts A'
+                background_color: 0, 1, 1, 1
+                on_press:
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'scan'
+            Button:
+                size_hint: .2, .1 # x, y
+                pos_hint: {'x': 0.5,'top': 0.91}
+                text: 'contracts B'
+                background_color: 0, 1, 1, 1
+
+
+
+
+
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+
+
+
+
+
