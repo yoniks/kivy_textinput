@@ -65,7 +65,7 @@ class Users:
         self.email = ''
         self.name_user = ''
         self.phone = ''
-        self.__user_id = 1000
+        self.__user_id = 0
         self.password = ''
         self.city = ''
         self.address = ''
