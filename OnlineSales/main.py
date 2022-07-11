@@ -1,8 +1,3 @@
-import pymongo
-from  pymongo import MongoClient
-from pprint import pprint
-from flask import Flask, request, url_for,render_template,sessions
-import jinja2
 
 
 
