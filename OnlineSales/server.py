@@ -106,7 +106,7 @@ def check_verification_token(email, token):
 
 def get_database():
 
- client = MongoClient("mongodb+srv://yoniat:pkNzFXRsZijci59x@websw.dfksw.mongodb.net/?retryWrites=true&w=majority")
+ client = MongoClient("mongodb+srv://yoniat:XXXXX@websw.dfksw.mongodb.net/?retryWrites=true&w=majority")
  try:
     print( client.server_info())
     return client
