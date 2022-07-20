@@ -1,0 +1,48 @@
+
+
+<button class="open-button" onclick="openForm()">Open Form</button>
+
+<div class="form-popup" id="myForm">
+  <div  class="form-container"> <!--action="/action_page.php"-->
+    <h1>verify your email</h1>
+    <form action="/login" method="POST" >
+    <input type="text" placeholder="Enter Email" name="email" id="verify_email_input" required>
+     <button type="submit" class="btn" id="verify_email_btn">Send</button><!--onclick="verify_email_btn()"-->
+    </form>
+
+
+    <form action="/send_pass" method="POST" >
+
+    <input type="password"  placeholder="Password sent to email"  name="verificationcode" id="verify_pass_input">
+    {% if error %}
+      <p >{{ error }}</p>
+    {% endif %}
+     <button type="submit" class="btn"  id="verify_pass_btn" >Send pass</button>
+    </form>
+
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </div>
+</div>
+
+
+
+<script>
+document.getElementById("verify_pass_input").style.display="none";
+document.getElementById("verify_pass_btn").style.display="none";
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+</script>
+
+{%if replace_btn %}
+<script>
+ document.getElementById("verify_email_input").style.display="none";
+  document.getElementById("verify_email_btn").style.display="none";
+  document.getElementById("verify_pass_input").style.display="block";
+  document.getElementById("verify_pass_btn").style.display="block";
+</script>
+{%endif%}
+
