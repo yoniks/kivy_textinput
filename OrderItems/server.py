@@ -22,14 +22,9 @@ SENDGRID_API_KEY= os.environ.get('SENDGRID_API_KEY')
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-sw = Swimwear()
+
 user = Users()
-items = ['', '', '', '', '', '']
 ord = Ordering('123456')
-
-
-
-
 
 
 
