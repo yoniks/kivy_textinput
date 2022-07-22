@@ -1,0 +1,130 @@
+
+
+
+body{
+background-color:#FFD094;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.img_container{
+  margin:auto;
+}
+.container_vertical{
+ display:flex;
+ justify-content: center;
+ margin:3%;
+
+}
+
+
+
+.imgs_home{
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+img.div_size_vertical{
+ width:100%;
+ max-height: 25%;
+
+}
+
+
+img.div_size_horizontal{
+ width:60%;
+  max-height: 50%;
+  padding-right:1%;
+}
+
+
+
+img.horizontal_three{
+ display:block;
+ margin:auto;
+ width:50%;
+ max-height:50%;
+ padding-right:1%;
+}
+
+img.horizontal_radius{
+ border-radius:50%;
+ width:25%;
+ max-height:30%;
+
+
+}
+
+/*imgs of tag home */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.nav-link{
+  color: #FFFFFF;
+}
+.home_nav {
+
+  background-color: #FFD094;
+  color: #FFFFFF;
+
+}
+.home_nav a {
+  float: left;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+#drs{
+ padding-left:0%;
+  padding-right:0%;
+  margin-right:0%;
+}
+
+
+
+
+
+
+/*button price of dress*/
+.floating_btn_prc{
+ width: 150px;
+ height: 45px;
+ background: #2AC8FF ;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ text-decoration: none;
+ border-radius:8px;
+ border: none;
+ font-size:15px;
+ color: #ffffff;
+ box-shadow: 2px 2px 5px rgba(0, 0, 0, 8.25);
+ position: fixed;
+ margin-left:43%;
+ bottom: 20px;
+
+}
