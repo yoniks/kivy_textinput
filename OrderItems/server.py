@@ -1,6 +1,7 @@
 from main import Swimwear, Dresses,Users,Ordering
 import pymongo
 from pymongo import MongoClient
+from bson.son import SON
 from pprint import pprint
 from flask import Flask, request, url_for, render_template, session, redirect
 import os
@@ -23,12 +24,21 @@ SENDGRID_API_KEY= os.environ.get('SENDGRID_API_KEY')
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 
+
+
+
+def initialize_swimwear_to_server():
+    client = get_database()
+    db = client['DesignerClothes']
+    collection = db['dresses']
+    dress =  collection.find_one({"sku":"DR777"})
+    print(dress)
+
+
+
 user = Users()
-ord = Ordering('123456')
-
-
-
-@app.route('/')
+ord = Ordering(0)#hold the active and lists of items we inialize num order when user
+@app.route('/')#add to list
 @app.route('/home')
 def open_home():
     ord.set_show_active('home')
@@ -38,46 +48,70 @@ def open_home():
             print("user id is exist")
     else:
         print("user id don't exist")
-    return render_template('home.html', len=len(items),
-                           list_item=items, color_select=sw.get_color(),
-                           show_active=ord.get_show_active(), active=ord.get_active(),replace_btn=False)
+
+    return render_template('home.html',
+                           show_active=ord.get_show_active(), active=ord.get_active())
 
 
-dress_obj = Dresses()
+list_dresses_to_html = []
+ #Ordering() is contain few list of items
 @app.route('/home/nav/dress')
-@app.route('/home/nav/dress',methods=['POST'])#
+@app.route('/home/nav/dress',methods=['POST'])
 def open_dress():
     ord.set_show_active('Dresses')  # Dresses
     ord.set_active('Dresses')
-    if request.method == 'POST':
-        list_item = request.get_json()
-        #print(list_item)
-        for it in list_item:
-            print(it['name'])
-    else:
-       print("open dress")
+    if request.method == 'POST':# user add to cart
+        list_dress = request.get_json()#sent from js if user add
+        if ord.order_id==0:
+            ord.order_id = get_id_order()#it bring from server new order id by sort
+        for it in list_dress:
+            add_to_cart = Dresses() #obj of dresses must be created every new initialize
+            add_to_cart.title = it['title']#initialize obj
+            add_to_cart.descript = it['descript']
+            ord.dresses_list.append(add_to_cart)
+            print(it['sku'])
 
-       if len(ord.dresses_list)==0:
-           print("dress_list is empty so have to download from server")
-           list_sku = ['DR0777','DR0778','DR0779','DR0780','DR0781','DR0782']
-           for i in range(0, 6):
-               dress_obj = Dresses()#create another objrct for next initialize don't affect on last one (similar pointer)
-               print(list_sku[i])
-               dress_obj.sku = list_sku[i]
-               ord.dresses_list.append(dress_obj)
-       else:
-           print("you can send the data to html", ord.dresses_list[0].sku)
-    return render_template('home.html', list_items=ord.dresses_list,
-                           show_active=ord.get_show_active(), active=ord.get_active(), replace_btn=False)
+    elif len(list_dresses_to_html)==0:
+         print("open server to bring dresses")
+         client = get_database()
+         db = client['DesignerClothes']
+         dresses = db['dresses']
+         cursor = dresses.find({})#bring all Documents
+         for it in cursor:
+             print(it)
+             list_dresses_to_html.append(it)#add object to list
+    return render_template('home.html', list_dress=list_dresses_to_html,
+                           show_active=ord.get_show_active(), active=ord.get_active())
 
+def initialize_dress_to_server():
+    client = get_database()
+    db = client['DesignerClothes']
+    dresses = db['dresses']
+    doc = {"_id":7000,"sku":"DR700" ,"title":"","descript":"","sizes":["","",""],
+           "colors":["",""],
+           "url_img":["","",""],
+           "available_stock":True,"price":0 }
+    dresses.insert_one(doc)
+
+def get_id_order():#create new id order to each user
+    client = get_database()
+    db = client['history_orders']
+    new_id = db['orders']
+    id_doc = new_id.find().limit(1).sort([('order_id', -1)])  # or $natural
+    mid  = int(id_doc[0]['order_id'])
+    return mid+1
 
 @app.route('/home/nav/swimwear')
 def open_swimwear():
     ord.set_show_active('Swimwear')
     ord.set_active('Swimwear')
-    return render_template('home.html', len=len(items),
-                           list_item=items, color_select=sw.get_color(),
-                           show_active=ord.get_show_active(), active=ord.get_active(), replace_btn=False)
+    return render_template('home.html',
+                           show_active=ord.get_show_active(), active=ord.get_active())
+
+
+
+
+
 
 
 
@@ -89,9 +123,7 @@ def login():
         print("email", _email)
         session["_email"] = _email
         send_verification(_email)
-        return render_template('home.html', len=len(items),
-                               list_item=items, color_select=sw.get_color(),
-                               show_active=ord.get_show_active(), active=ord.get_active())
+
     return redirect(url_for('open_home'))
 
 
@@ -116,10 +148,8 @@ def generate_verification_code():
 
         else:
             error = "Invalid verification code. Please try again."
-            return render_template('home.html', len=len(items),
-                                   list_item=items, color_select=sw.get_color(),
-                                   show_active=ord.get_show_active(), active=ord.get_active(),
-                                   replace_btn=True, error=error)
+            return render_template('home.html',error=error,
+                                   show_active=ord.get_show_active(), active=ord.get_active())
     return  redirect(url_for('navigation'))
 
 
@@ -135,30 +165,19 @@ def check_verification_token(email, token):
 
 
 
+
+
 def get_database():
-    client = MongoClient("mongodb+srv://yoniat:your id@websw.dfksw.mongodb.net/?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://yoniat:id@websw.dfksw.mongodb.net/?retryWrites=true&w=majority")
     try:
        print(client.server_info())
        return client
     except:
        print('Unable to open server')
 
-def updata_my_email():
-    list_u = []
-    client = get_database()
-    db = client["Users"]
-    collection = db["user"]
-    doc = {"_id": 10000, "name": "yoni chitrit", "email": "yoni.ch@icloud.com", "mobile": "", "city": "", "address": ""}
-    collection.insert_one(doc)
-    get_user = collection.find_one({"email": "yoni.ch@icloud.com"})
-    user.email = get_user['email']
-    list_u.append(user)
-    for it in list_u:
-        print("my email", it.email)
-
 
 def set_user(email):
- if len(email)>0:
+ if len(email)>0 and len(user.email)==0:
     client = get_database()
     session['user_id'] = None
     db = client["Users"]
@@ -185,29 +204,26 @@ def set_user(email):
            user.name_user = get_user['name']
 
 
-def set_user_with_id(user_id):
-    print('set_user_with_id')
-    client = get_database()
-    db = client["Users"]
-    collection = db["user"]
-    _user = collection.find_one({"_id":user_id})
-    if _user!=None:
-       if len(_user['email']) > 0 and _user['_id']>0:#must return str and int and >1000
-          session['user_id'] = _user['_id']#from database
-          user.email = _user['email']
-          user.name_user = _user['name']
-          return True
+def set_user_with_id():
+    if 'user_id' in session:
+       user_id = session['user_id']
+       print('set_user_with_id')
+       client = get_database()
+       db = client["Users"]
+       users = db["user"]
+       _user = users.find_one({"_id":user_id})
+       if _user!=None:
+          if len(_user['email']) > 0 and _user['_id']>0:#must return str and int and >1000
+             session['user_id'] = _user['_id']#from database
+             user.email = _user['email']
+             user.name_user = _user['name']
+             return True
     return False
 
 
 
 
-def set_swimwear():
-    client = get_database()
-    db = client['DesignerClothes']
-    collection = db['swimwear']
-    doc = {}
-    collection.insert_one(doc)
+
 
 
 
@@ -217,7 +233,7 @@ def send_order_to_server():# if there is no name, city, and address tham call fu
        if 'user_id' in session:
          if session["user_id"] >= 1000 and len(user.email)==0:  # send it
            user_id = session["user_id"]
-           if set_user_with_id(user_id):  # open database to initialize the use
+           if set_user_with_id():  # open database to initialize the use
                print("send the order", user.email)
            return redirect(url_for('open_home'))
        elif session["user_id"] >= 1000 and len(user.email) >0:
@@ -228,6 +244,8 @@ def send_order_to_server():# if there is no name, city, and address tham call fu
 if __name__ == "__main__":
     app.debug = True
     app.run(port=5000)#host='0.0.0.0', port=5000
+
+
 
 
 
