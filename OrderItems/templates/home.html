@@ -38,10 +38,7 @@
         Rent</button>
   </li>
 
-     <li class="nav-item" role="presentation">
-    <button class="nav-link {{active[4]}}" id="login-tag" data-bs-toggle="tab" data-bs-target="#login-tab-pane" type="button" role="tab" aria-controls="login-tab-pane" aria-selected="false">
-        {{is_login}}</button>
-  </li>
+
 
 </ul>
 
@@ -166,18 +163,19 @@
      this is Dresses page
 
        <div class="row row-cols-1 row-cols-md-2" style="margin:3%; ">
-   {%for it in list_items%}
+   {%for it in list_dress %}
 
  <div class=" card mb-3 col-md-6 col-lg-6" style="max-width: 540px; margin-right:4%; margin-left:3%">
   <div class="row g-0">
     <div  class="col-md-4">
-      <img id="link_dress" src="https://res.cloudinary.com/clouster/image/upload/v1618558359/background/bg_logIn_aydneo.jpg" class="img-fluid rounded-start"  style="padding-top:2%;" >
+        <!--https://res.cloudinary.com/clouster/image/upload/v1618558359/background/bg_logIn_aydneo.jpg-->
+      <img id="link_dress" src="{{it['url_img'][0]}}" class="img-fluid rounded-start"  style="padding-top:2%;" >
     </div>
     <div class="col-md-8">
       <div class="card-body">
-        <h5 id="name_dress" class="card-title">dress {{it.sku}}</h5>
-        <p class="card-text">This is a wider card with supporting text  This content is a little bit longer.</p>
-         <p class="card-text"><small class="text-muted" id="price_dress">price: 100</small></p>
+        <h5 id="name_dress" class="card-title"> {{it['title']}}</h5>
+        <p class="card-text">{{it['descript']}}</p>
+         <p class="card-text"><small class="text-muted" id="price_dress">{{it['price']}}</small></p>
 
 
 
@@ -196,9 +194,10 @@
      size
     </button>
      <ul class="dropdown-menu">
-       <li class="dropdown-item size_dress">S</li>
-       <li class="dropdown-item size_dress">M</li>
-       <li class="dropdown-item size_dress">L</li>
+       {%for s_at in sizes['size'] %}
+       <li class="dropdown-item size_dress">{{s_at}}</li>
+      <!-- <li class="dropdown-item size_dress">M</li>-->
+        {%endfor%}
      </ul>
   </div>
       </div>
@@ -210,9 +209,9 @@
     color
     </button>
      <ul class="dropdown-menu">
-       <li class="dropdown-item color_dress" >blue</li>
-       <li class="dropdown-item color_dress" >black</li>
-       <li class="dropdown-item color_dress" >pink</li>
+       {%for c_at in colors['color'] %}
+       <li class="dropdown-item color_dress" >{{c_at}}</li>
+       {%endfor%}
      </ul>
   </div>
       </div>
@@ -230,7 +229,7 @@
       </div>
 
      <div class="col-lg-3 col-md-6" hidden>
-    <div id="sku_id_item"  >{{it.sku}}</div>
+    <div id="sku_id_item"  >{{it['sku']}}</div>
     </div>
 
 
@@ -241,10 +240,9 @@
     {%endfor%}
        <!--btn btn-info margin:auto col-lg-2 col-md-2-->
 
-
    </div> <!--close dress tag-->
       <!--onclick="window.location.href='http://127.0.0.1:5000/home/navto';"-->
-      <button type="button" class="floating_btn_prc" > Add To Cart</button>
+      <button type="button" class="floating_btn_prc" >Add To Cart</button>
   </div><!--end index of dresses-->
 
 
@@ -262,20 +260,6 @@
 
 
 
-    <div class="tab-pane fade {{show_active[4]}}" id="login-tab-pane" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
-     login
-  </div>
-
-
-
-
-
-
-
-
-
-
-
 
 </div><!--end group-->
 
@@ -284,7 +268,7 @@
 <script>
 
     document.querySelector("#to_dresses_link").addEventListener("click",function(){
-      console.log("test");
+    
      location.href='http://127.0.0.1:5000/home/nav/dress';
 
     });
@@ -297,5 +281,6 @@
 
 </body>
 </html>
+
 
 
