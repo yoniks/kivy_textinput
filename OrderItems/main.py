@@ -1,28 +1,20 @@
-import pymongo
-from  pymongo import MongoClient
-from pprint import pprint
-from flask import Flask, request, url_for,render_template,session,redirect,escape
-import secrets
-import jinja2
-app = Flask(__name__)
-app.secret_key = secrets.token_hex()
 
 
 
 
-
-# of js  {name:"" ,sku:"",price:0,size:"",colors:"",url_img:"",counter:0};
 class Parent:
-
+# this class extends to dresses and swimwear and we user it to add items of users,
+#we not use it to aet from server becouse size and color must be list.
     def __init__(self):
-        self.name_item = 0
         self.sku = ''
-        self.price = 0
+        self.title = ''
+        self.descript = ''
         self.size = 'size'   #('S' ,'M' ,'L')
         self.colors = 'color'
         self.url_img = ''
         self.available_stock = False
         self.counter = 0
+        self.price = 0
 
     def set_sku(self, sku):
         if isinstance(sku,str):
@@ -30,9 +22,9 @@ class Parent:
     def set_price(self, price):
         if isinstance(price,int):
            self.price = price
-    def set_name_item(self, name_item):
-        if isinstance(name_item, str):
-           self.name_item = name_item
+    def set_title(self, title):
+        if isinstance(title, str):
+           self.title = title
     def set_size(self, size):
         self.size = size
     def set_colors(self, colors):
@@ -55,7 +47,7 @@ class Parent:
     def get_url_img(self):
         return self.url_img
     def get_name_item(self):
-        return self.name_item
+        return self.title
     def get_counter(self):
         return self.counter
     def get_available_stock(self):
@@ -150,6 +142,8 @@ class Ordering:
             self.show_active[1] = 'show active'
         elif "Dresses" == name:
             self.show_active[2] = 'show active'
+        elif "Rent" == name:
+            self.show_active[3] = 'show active'
 
     def set_active(self,name):
         self.active = ['', '', '', '']
@@ -159,6 +153,8 @@ class Ordering:
             self.show_active[1] = 'active'
         elif "Dresses" == name:
             self.active[2] = 'active'
+        elif "Rent" == name:
+            self.active[3] = 'active'
 
 
     def get_active(self):
@@ -172,42 +168,17 @@ class Ordering:
 
 
 class OrderHistory:
-    def __init__(self, order_id, user_id, email, name_user,phone ,order_date, total_price, order_cancel):
+    def __init__(self, order_id, user_id, email, name_user,phone ,order_date, total_price, is_all_order_cancel):
         self.email = email
         self.name_user = name_user
         self.phone = phone
         self.order_id = order_id
         self.order_date = order_date
         self.total_price = total_price
-        self.order_cancel = order_cancel
-        self.items_order = []
+        self.order_cancel = is_all_order_cancel
         self.user_id = user_id
 
-    def set_items_order(self,items):
-        self.items_order = items
-        for itm in self.items_order:
-            print("\nOrderHistory: "+ str(itm))
 
-    def send_to_database(self):
-        if self.user_id is None or self.total_price is None:
-            print('None')
-
-
-
-
-
-
-
-
-
-
-#respon to tag
-def add_to_cart(color,index):
-    sw = Swimwear()
-    res_as_path = request.path.split('/')
-    # the keyword global open the variable to initialize in function
-    global as_path
-    as_path = res_as_path[1]
 
 
 
