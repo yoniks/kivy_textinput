@@ -29,12 +29,7 @@ client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 
 
-def initialize_swimwear_to_server():
-    client = get_database()
-    db = client['DesignerClothes']
-    collection = db['dresses']
-    dress =  collection.find_one({"sku":"DR777"})
-    print(dress)
+
 
 
 
@@ -84,7 +79,6 @@ def open_dress():
 
 link_img = ['https://res.cloudinary.com/clouster/image/upload/v1658824154/website_clothes/Dresses/DR1002_BLACK_zwlgwe.png',
             'https://res.cloudinary.com/clouster/image/upload/v1658824154/website_clothes/Dresses/DR1002_GREEN_kcdnpm.png']
-
 
 def initialize_dress_to_server():
     client = get_database()
