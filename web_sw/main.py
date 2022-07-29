@@ -1,7 +1,5 @@
 
 
-
-
 class Parent:
 # this class extends to dresses and swimwear and we user it to add items of users,
 #we not use it to aet from server becouse size and color must be list.
@@ -10,7 +8,7 @@ class Parent:
         self.title = ''
         self.descript = ''
         self.size = 'size'   #('S' ,'M' ,'L')
-        self.colors = 'color'
+        self.color = 'color'
         self.url_img = ''
         self.available_stock = False
         self.counter = 0
@@ -107,21 +105,34 @@ class Users:
 
 
 class Ordering:
-    def __init__(self,  order_id):
-         self.order_id= order_id
+    def __init__(self):
+         self.order_id= 0
          self.swimwear_list = []
          self.dresses_list = []
          self.rent_list = []
          self.total_price = 0
 
 
+
+    def set_order_id(self,ID):
+        self.order_id = ID
+
     def get_order_id(self):
-     return  self.order_id
+        return self.order_id
 
-    def add_to_cart(self,price, *obj_order):#sku, name_item, size, color, price, link
-       self.swimwear_list.append(obj_order)
-       self.total_price += price
+    def add_dresses_to_bag(self,price, obj):
+        self.dresses_list.append(obj)
+        self.total_price += price
 
+    def get_dresses_list(self):
+        return self.dresses_list
+
+
+    def add_swimwear_list_to_bag(self,price,obj):
+        self.swimwear_list.append(obj)
+        self.total_price += price
+    def get_swimwear_list(self):
+        return self.swimwear_list
 
     "'set many argument and cheak if it exists in list'"
     def remove_from_card(self,  price, *remove):
@@ -133,14 +144,6 @@ class Ordering:
     def get_total_price(self):
          return self.total_price
 
-
-
-
-    def get_active(self):
-        return self.active
-
-    def get_show_active(self):
-        return self.show_active
 
 
 
@@ -156,9 +159,6 @@ class OrderHistory:
         self.total_price = total_price
         self.order_cancel = is_all_order_cancel
         self.user_id = user_id
-
-
-
 
 
 
