@@ -1,6 +1,7 @@
 
 $( document ).ready(function() {
-          const  doc = {name:"" ,sku:"",price:0,size:"",colors:"",url_img:"",counter:0};
+          const doc = {sku:"",title:"",descript:"",size:"",color:"",url_img:"",available_stock:true,
+                        counter:0,price:0}
           const doc_list = [];
 
 
@@ -8,11 +9,10 @@ $( document ).ready(function() {
          let ref_to=0,count_element=0,uniq_sku='';
          let  select_size = document.querySelectorAll("#ToSizeDress").length;
           for(let i=0;i<select_size;i++){
-            document.querySelectorAll("#ToSizeDress")[i].addEventListener("click",function(){
-
-                count_element = document.querySelectorAll("#ToAddDress")[i].textContent;
-                uniq_sku = document.querySelectorAll("#sku_id_item")[ref_to].textContent;//uniq id of item
-                ref_to=i;
+              document.querySelectorAll("#ToSizeDress")[i].addEventListener("click",function(){
+              count_element = document.querySelectorAll("#ToAddDress")[i].textContent;
+              uniq_sku = document.querySelectorAll("#sku_id_item")[ref_to].textContent;//uniq id of item
+              ref_to=i;
              });
           }
 
@@ -21,7 +21,7 @@ $( document ).ready(function() {
              document.querySelectorAll("li.size_dress")[i].addEventListener("click",function(){
                  //3)if user want change the size ,
 
-                  document.querySelectorAll("#ToSizeDress")[ref_to].innerHTML= "dfd";
+                 // document.querySelectorAll("#ToSizeDress")[ref_to].innerHTML= "";
                 if(count_element>0){
 
                    for(let ref in doc_list){
@@ -29,13 +29,13 @@ $( document ).ready(function() {
                           doc_list[ref].size = this.textContent;
                          //let temp = doc_list[ref].split(',');
                          //doc_list.splice(ref,1)
-                        // temp[3]  =  this.textContent;
-                        // doc_list[ref]='temp[0]+","+temp[1]+","+temp[2] +","+temp[3] +","+temp[4]+","+temp[5]+","+temp[6]';
+
                          document.querySelectorAll("#ToSizeDress")[ref_to].innerHTML=doc_list[ref].size;
                          }
                    }
                 }else{
-                  doc.name = document.querySelectorAll("#name_dress")[ref_to].textContent;//name dress
+                  doc.title = document.querySelectorAll("#name_dress")[ref_to].textContent;//name dress
+                  doc.descript = document.querySelectorAll("#descript")[ref_to].textContent;//name dress
                   doc.price = document.querySelectorAll("#price_dress")[ref_to].textContent;//add price
                   doc.url_img = document.querySelectorAll("#link_dress")[ref_to].src; //add link img
                   doc.size = this.textContent;// from list of size
@@ -72,7 +72,7 @@ $( document ).ready(function() {
                      }
                 }else{
                    document.querySelectorAll("#ToColorDress")[ref_to].innerHTML=this.innerHTML;
-                   doc.colors = this.textContent;
+                   doc.color = this.textContent;
                 }
              });
           }
@@ -84,7 +84,7 @@ $( document ).ready(function() {
 
 
             // add_dress
-            let counter=0;// for element of html
+
              let list_select_dress = document.querySelectorAll("#ToAddDress").length;
           for(let i=0;i<list_select_dress;i++){
             document.querySelectorAll("#ToAddDress")[i].addEventListener("click",function(){
@@ -97,15 +97,18 @@ $( document ).ready(function() {
              document.querySelectorAll("li.add_dress")[i].addEventListener("click",function(){
 
              //if user selected the properties than add to list and counter it
-             if(doc.size.length>0 && doc.colors.length>0 &&doc.name.length>0){
-                doc.sku =  document.querySelectorAll("#sku_id_item")[ref_to].textContent;//uniq id of item
+             if(doc.size.length>0 && doc.color.length>0 &&doc.title.length>0){
+                 doc.sku =  document.querySelectorAll("#sku_id_item")[ref_to].textContent;//uniq id of item
                  doc.counter = 1;
-                let name = doc.name,sku=doc.sku,price=doc.price,size=doc.size,color=doc.colors,url=doc.url_img,con=doc.counter;
-                 doc_list.push({name:name,sku:sku,price:price,size:size,color:color,url:url,con:con});
-             for(let ref in doc){
+
+                 const temp_doc = {sku:doc.sku,title:doc.title,descript:doc.descript,
+                                   size:doc.size,color:doc.color,url_img:doc.url_img,available_stock:true,
+                                    counter:doc.counter,price:doc.price}
+                 doc_list.push(temp_doc);
+              for(let ref in doc){
                // delete doc[ref];// delete obj
                 doc[ref] = "";
-              }
+               }
                 document.querySelectorAll("#ToAddDress")[ref_to].innerHTML=1;
 
 
@@ -118,7 +121,7 @@ $( document ).ready(function() {
                     let uniq_sku = document.querySelectorAll("#sku_id_item")[ref_to].textContent;
                     for(let ref in doc_list){
                     if(doc_list[ref].sku==uniq_sku){
-                       doc_list[ref].con+=1;}
+                       doc_list[ref].counter+=1;}
                     }
                 }
 
@@ -140,19 +143,17 @@ $( document ).ready(function() {
 
              let uniq_sku = document.querySelectorAll("#sku_id_item")[ref_to].textContent;//uniq id of item
                for(let ref in doc_list){
-
                    //let words = doc_list[ref].split(',')
                   if(doc_list[ref].sku==uniq_sku){// delete object with uniq of sku
-                      if(doc_list[ref].con>1){doc_list[ref].con-=1; }else{// if bigger than 1 just counter it
+                      if(doc_list[ref].counter>1){doc_list[ref].counter-=1; }else{// if bigger than 1 just counter it
                           doc_list.splice(ref,1)// if eq to one delete the object and upData element of html
                         }
-
-                     if(parseInt(document.querySelectorAll("#ToAddDress")[ref_to].textContent) > 0){//less one in element
-                        counter=parseInt(document.querySelectorAll("#ToAddDress")[ref_to].textContent);
-
-                        if(counter>1){
+                      if(parseInt(document.querySelectorAll("#ToAddDress")[ref_to].textContent) > 0){//less one in element
+                         let counter = 0;
+                         counter=parseInt(document.querySelectorAll("#ToAddDress")[ref_to].textContent);
+                         if(counter>1){
                           document.querySelectorAll("#ToAddDress")[ref_to].innerHTML =(counter-1);
-                        }else{
+                         }else{
                           document.querySelectorAll("#ToAddDress")[ref_to].innerHTML ='Add';
                           document.querySelectorAll("#ToColorDress")[ref_to].innerHTML ='color';
                           document.querySelectorAll("#ToSizeDress")[ref_to].innerHTML = 'size';
@@ -195,7 +196,7 @@ $( document ).ready(function() {
 
 
             }else{
-              document.querySelector("#floating_btn_prc").innerHTML = 'Empty List';
+             // document.querySelector("#floating_btn_prc").innerHTML = 'Empty List';
             }
 
           });
@@ -210,15 +211,3 @@ $( document ).ready(function() {
    // });
 
    });
-        //dresses-tab "#home-tab", "#dresses-tab" document.querySelector(
-
-/*
-  //if click on img of item go to show all the array images
-            let list_select_dress = document.querySelectorAll("#link_dress").length;
-          for(let i=0;i<list_select_dress;i++){
-            document.querySelectorAll("#link_dress")[i].addEventListener("click",function(){
-               let sku_uniq = document.querySelectorAll("#sku_id_item")[i].textContent;
-               // send to python to show images or something else
-             });
-          }
-*/
