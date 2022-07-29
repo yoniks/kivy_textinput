@@ -28,59 +28,10 @@ client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 
 
-
-
-
-
-
-user = Users()
-ord = Ordering(0)#hold the active and lists of items we inialize num order when user
-@app.route('/')#add to list
-@app.route('/home')
-def open_home():
-
-    if 'user_id' in session:
-        if session["user_id"] >= 1000 and len(user.email) > 0:
-            print("user id is exist")
-    else:
-        print("user id don't exist")
-       # initialize_dress_to_server()
-
-    return render_template('home.html')
-
-list_dresses_to_html = []
- #Ordering() is contain few list of items
-@app.route('/home/dresses/to')
-@app.route('/home/dresses/to',methods=['POST'])
-def open_dress():
-    if request.method == 'POST':# user add to cart
-        list_dress = request.get_json()#sent from js if user add
-        if ord.order_id==0:
-            ord.order_id = get_id_order()#it bring from server new order id by sort
-        for it in list_dress:
-            add_to_cart = Dresses() #obj of dresses must be created every new initialize
-            add_to_cart.title = it['title']#initialize obj
-            add_to_cart.descript = it['descript']
-            ord.dresses_list.append(add_to_cart)
-            print(it['sku'])
-    elif len(list_dresses_to_html)==0:
-         print("open server to bring dresses")
-         client = get_database()
-         db = client['DesignerClothes']
-         dresses = db['dresses']
-         cursor = dresses.find({})#bring all Documents
-         print('cursor', cursor)
-         for it in cursor:
-             print('it',it)
-             list_dresses_to_html.append(it)#add object to list
-
-    return render_template('Dresses.html', list_dress=list_dresses_to_html)#list of list and object
-
-
-link_img = ['https://res.cloudinary.com/clouster/image/upload/v1658824154/website_clothes/Dresses/DR1002_BLACK_zwlgwe.png',
-            'https://res.cloudinary.com/clouster/image/upload/v1658824154/website_clothes/Dresses/DR1002_GREEN_kcdnpm.png']
-
 def initialize_dress_to_server():
+    link_img = [
+        'https://res.cloudinary.com/clouster/image/upload/v1658824154/website_clothes/Dresses/DR1002_BLACK_zwlgwe.png',
+        'https://res.cloudinary.com/clouster/image/upload/v1658824154/website_clothes/Dresses/DR1002_GREEN_kcdnpm.png']
     client = get_database()
     db = client['DesignerClothes']
     dresses = db['dresses']
@@ -94,25 +45,128 @@ def initialize_dress_to_server():
                "available_stock": True, "price": 70}
     print('is_insert',dresses.insert_one(doc).inserted_id)
 
-def get_id_order():#create new id order to each user
+def initialize_swimwear_to_server():
     client = get_database()
-    db = client['history_orders']
-    new_id = db['orders']
-    id_doc = new_id.find().limit(1).sort([('order_id', -1)])  # or $natural
-    mid  = int(id_doc[0]['order_id'])
-    return mid+1
+    db = client['DesignerClothes']
+    collection = db['dresses']
+    dress =  collection.find_one({"sku":"DR777"})
+    print(dress)
+
+
+
+user = Users()
+@app.route('/',methods=['GET','POST'])#add to list
+@app.route('/home', methods=['GET','POST'])
+def open_home():
+    if 'user_id' in session:
+        if session["user_id"] >= 11000 and len(user.email) > 0:
+            print("user id is exist")
+    else:
+        session["user_id"] = 11000
+        user.email = 'yoni.ch@icloud.com'
+        print("user id don't exist")
+       # initialize_dress_to_server()
+    return render_template('Home.html')
+
+ord = Ordering()#hold the active and lists of items we inialize num order when user
+list_dresses_to_html = [] #one time is inialize the list item
+ #Ordering() is contain few list of items
+@app.route('/home/dresses/to')
+@app.route('/home/dresses/to',methods=['POST'])
+def open_dress():
+    if request.method == 'POST':# user add to cart
+        list_dress = request.get_json()#sent from js if user add
+        for it in list_dress:
+            add_to_cart = Dresses() #obj of dresses must be created every new initialize
+            add_to_cart.title = it['title']#initialize obj
+            add_to_cart.descript = it['descript']
+            add_to_cart.sku = it['sku']
+            add_to_cart.size = it['size']
+            add_to_cart.color = it['color']
+            add_to_cart.price = int(it['price'])
+            add_to_cart.counter = int(it['counter'])
+            add_to_cart.url_img = it['url_img']
+            temp_price= add_to_cart.price * add_to_cart.counter
+            ord.add_dresses_to_bag(temp_price,add_to_cart)#the key of self  kepping on list, we call the function
+
+        for itm in ord.get_dresses_list():#it is instans of class, not object
+            print('item',type(itm))
+
+        if len(ord.get_dresses_list()) >= 2:
+            return redirect(url_for('send_order_to_database'))
+
+    elif len(list_dresses_to_html) == 0:
+         print("open server to initialize dresses")
+         client = get_database()
+         db = client['DesignerClothes']
+         dresses = db['dresses']
+         cursor = dresses.find({})#bring all Documents
+         for it in cursor:
+             list_dresses_to_html.append(it)#add object to list
+    return render_template('Dresses.html', list_dress=list_dresses_to_html)#list of list and object
+
+
+@app.route('/7777/send/order/to/server')
+def send_order_to_database():
+    #1 we check if user made login
+    #2 we create uniq id order
+    #3 we send the order
+    session['user_id'] = 11000
+    user.email = 'yoni.ch@icloud.com'
+    print('send order to')
+    if 'user_id' in session:
+        if session["user_id"] < 10000 or len(user.email) == 0:
+           print('user must verify before the order sent to server')
+           #print some msg to user
+        else:
+          client = get_database()
+          db = client['orders']
+          items = db['items']
+          #Cursor = items.find({})
+         # if list(Cursor)==0:
+
+          if len(ord.get_dresses_list())>0 or len(ord.get_swimwear_list())>0: #or len(ord.rent_list)>0:
+             if ord.get_order_id() == 0:
+                uniq_id = 0
+                u_id = items.find().limit(1).sort([('_id', -1)])
+                uniq_id = int(u_id[0]['_id'])
+                uniq_id += 1
+                ord.set_order_id(uniq_id)
+                print('order sent', ord.get_order_id())
+                if uniq_id > int(u_id[0]['_id']):#up to dataBase
+                   set_to_dress = []
+                   set_to_swimwear = []
+                   for o in ord.get_dresses_list():# just with class of Ordring we add or remove  object,
+                       set_to_dress.append({"sku":o.sku,"title":o.title,"descript":o.descript,"size":o.size,"color":o.color,
+                                             "url_img":o.url_img,"available_stock":True,
+                                             "counter":o.counter,"price":o.price})
+
+                   items.insert_one({'_id':ord.get_order_id(),'user_id':session["user_id"],'email':user.email,
+                                 'list_dress':set_to_dress,
+                                  'list_swimwear':set_to_swimwear,
+                                 'total_price':ord.get_total_price()})
+    return render_template('Home.html')
+
+
+
+
+
+
+
+
 
 @app.route('/home/swimwear/to')
 def open_swimwear():
-    return render_template('swimwear.html')
+    return render_template('Swimwear.html')
 
 
 
 
 @app.route('/login/verify', methods=['GET','POST'])
 def login():
+    # _email = request.form['email']
     if request.method == 'POST':
-        _email = request.get_json() # _email = request.form['email']
+        _email = request.get_json()
         print("email", _email)
         session["_email"] = _email
         is_valid = send_verification(_email)
@@ -228,23 +282,14 @@ def set_user_with_id():
 
 
 
-@app.route('/send/order' ,methods=['POST'])
-def send_order_to_server():# if there is no name, city, and address tham call fun to ask it
-    if request.method == 'POST':
-       if 'user_id' in session:
-         if session["user_id"] >= 1000 and len(user.email)==0:  # send it
-           user_id = session["user_id"]
-           if set_user_with_id():  # open database to initialize the use
-               print("send the order", user.email)
-           return redirect(url_for('open_home'))
-       elif session["user_id"] >= 1000 and len(user.email) >0:
-            print("send to order")
-    return redirect(url_for('home'))
+
 
 
 if __name__ == "__main__":
     app.debug = True
     app.run(port=5000)#host='0.0.0.0', port=5000
+
+
 
 
 
