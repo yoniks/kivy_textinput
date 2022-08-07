@@ -1,5 +1,4 @@
 import flask
-
 from main import Swimwear, Dresses,Users,Ordering
 import pymongo
 from pymongo import MongoClient
@@ -10,11 +9,9 @@ import os
 from dotenv import load_dotenv
 from twilio.rest import Client
 import secrets
-"""
-#Note:  server start again every change we doing at the code   
-#session['id_item'] is not affect on change in code and refresh, the value saved at server
-"""
-#session.pop('user_id', None)
+
+
+
 load_dotenv()
 app = Flask(__name__)
 #  Set the secret key to some random bytes. Keep this really secret!
