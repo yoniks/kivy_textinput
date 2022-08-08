@@ -1,0 +1,47 @@
+
+body{
+background-color:#dac0ff;
+font-family: Arial, Helvetica, sans-serif;
+}
+.head-lamp{
+ width:100%;
+ height:300px;
+ margin:auto;
+display:flex;
+ justify-content: center;
+ margin-bottom:2%;
+
+}
+.ticket-center{
+margin:auto;
+display:flex;
+ justify-content: center;
+}
+@media only screen and (max-width: 1000px){
+.col-sm-center{
+margin:auto;
+display:flex;
+width:30%;
+ justify-content: center;
+}
+}
+
+/*button price of dress*/
+#floating_btn_prc{
+ width: 150px;
+ height: 45px;
+ background: #dac0ff;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ text-decoration: none;
+ border-radius:8px;
+ border: none;
+ font-size:15px;
+ color: #ffffff;
+ box-shadow: 2px 2px 5px rgba(0, 0, 0, 8.25);
+ position: fixed;
+ margin-left:39%;
+ bottom: 20px;
+
+}
