@@ -68,7 +68,8 @@
            <div class="container-color" >
                <span  >Color: </span>
         {%for im in at['url_img']%}<!--array usl_img  contain list of objects-->
-             <button  class="color-inline add-item-color" style=" background-color:{{im['color']}}"> </button>
+             <button  class="color-inline add-item-color" style=" background-color:{{im['color']}}"> 
+                <span id="search-img" style="display:none">{{im['img'][0]}}</span></button>
          {%endfor%}
        </div>
 
@@ -111,7 +112,7 @@
 
 
          <div class="row">
-             <div id="search-img" style="display:none" >{{at['url_img']}}</div>
+            
             {%for im in at['url_img']%}<!--get each object that contain array of link img-->
                    {%for imb in im['img']%}      <!--  get the list of link img in each array of objects-->
 
