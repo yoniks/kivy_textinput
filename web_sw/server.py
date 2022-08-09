@@ -97,15 +97,17 @@ def set_dresses():
     return render_template('Dresses.html', list_dress=list_dresses_to,first_list_dress=temp_first_group)
 
 
-
-list_swimwear_to_html = [] #one time is inialize the list item
+""" list_swimwear_to 
+initialize one time from database mongoDB to fill the html"""
+list_swimwear_to = []
+temp_list_swimwear_to =[]
 @app.route('/home/swimwear/to',methods=['GET','POST'])
 def set_swimwear():
     if request.method == 'POST':
-       list_swimwear = request.get_json() #sent from js if user add
+       list_swimwear = request.get_json()
        for it in list_swimwear:
-           add_to_cart = Swimwear()  # obj of dresses must be created every new initialize
-           add_to_cart.title = it['title']  # initialize obj
+           add_to_cart = Swimwear()
+           add_to_cart.title = it['title']
            add_to_cart.descript = it['descript']
            add_to_cart.sku = it['sku']
            add_to_cart.size = it['size']
@@ -114,15 +116,19 @@ def set_swimwear():
            add_to_cart.counter = int(it['counter'])
            add_to_cart.url_img = it['url_img']
            temp_price = add_to_cart.price * add_to_cart.counter
-           ord.add_swimwear_list_to_bag(temp_price, add_to_cart)  
-    elif len(list_swimwear_to_html)>0:
+           # the key of self  kepping on list, we call the function
+           ord.add_swimwear_list_to_bag(temp_price, add_to_cart)
+           print("price: ",ord.get_total_price())
+    elif len(list_swimwear_to)==0:
          client = get_database()
          db = client['DesignerClothes']
          swimwear = db['swimwear']
          cursor = swimwear.find({})  # bring all Documents
          for it in cursor:
-             list_swimwear_to_html.append(it)  # add object to list
-    return render_template('Swimwear.html',list_swimwear=list_swimwear_to_html)
+             doc = {"title":it['title'] ,"sku": it['sku'],"url_img":it['url_img'][0]['img'][0],"price":it['price']}
+             temp_list_swimwear_to.append(doc)
+             list_swimwear_to.append(it)
+    return render_template('Swimwear.html',list_swimwear=temp_list_swimwear_to)
 
 
 
