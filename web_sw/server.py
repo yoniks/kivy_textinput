@@ -25,12 +25,6 @@ TWILIO_VERIFY_SERVICE = os.environ.get('TWILIO_VERIFY_SERVICE')
 SENDGRID_API_KEY= os.environ.get('SENDGRID_API_KEY')
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-"""
-   cursor = dresses.find({})
-   print(cursor)
-   for at in cursor:
-       print(at['url_img'])
-  """
 
 
 
@@ -45,21 +39,27 @@ def open_home():
         pass
     return render_template('Home.html')
 
-ord = Ordering()#hold the active and lists of items we inialize num order when user
-list_dresses_to = [] #one time is inialize the list item
-list_first_group_dresses_to = []
-temp_first_group = []##one time is inialize the list item
- #Ordering() is contain few list of items
 
+"""this class holding the order of items user and delete items """
+ord = Ordering()
+"""
+1)list_dresses_to and list_first_group_dresses_to 
+initialize one time from database mongoDB to fill the html.
+2)temp_first_group holding some of value- title,sku,one url img, and price
+when user click on the img we display all the photos with description
+"""
+list_dresses_to = []
+list_first_group_dresses_to = []
+temp_first_group = []
 @app.route('/home/dresses/to',methods=['GET','POST'])
 def set_dresses():
     print("my email: ",user.email)
     if request.method == 'POST':# user add to cart
-        list_dress = request.get_json()#sent from js if user add
+        list_dress = request.get_json()
         for it in list_dress:
-            print("added to set_dresses() ", it['sku'])
-            add_to_cart = Dresses() #obj of dresses must be created every new initialize
-            add_to_cart.title = it['title']#initialize obj
+            
+            add_to_cart = Dresses() 
+            add_to_cart.title = it['title']
             add_to_cart.descript = it['descript']
             add_to_cart.sku = it['sku']
             add_to_cart.size = it['size']
@@ -68,13 +68,12 @@ def set_dresses():
             add_to_cart.counter = int(it['counter'])
             add_to_cart.url_img = it['url_img']
             temp_price= add_to_cart.price * add_to_cart.counter
-            ord.add_dresses_to_bag(temp_price,add_to_cart)#the key of self  kepping on list, we call the function
+            ord.add_dresses_to_bag(temp_price,add_to_cart)
         if len(list_dress)>0:
             return jsonify({'dresses': 'ok'})
         else:
             return jsonify({'dresses': 'error'})
-      #  for itm in ord.get_dresses_list():#it is instans of class, not object
-       #     print('item',type(itm),itm.sku)
+     
     elif len(list_dresses_to) == 0:
          user.email = "yon.ch"
          print("open server to initialize dresses")
@@ -95,12 +94,11 @@ def set_dresses():
              #print(it['url_img']['color_text'],"-",it['url_img']['color'])
              temp_first_group.append(doc)
              list_first_group_dresses_to.append(it)
-    return render_template('Dresses.html', list_dress=list_dresses_to,first_list_dress=temp_first_group)#list of list and object
+    return render_template('Dresses.html', list_dress=list_dresses_to,first_list_dress=temp_first_group)
 
 
 
 list_swimwear_to_html = [] #one time is inialize the list item
-
 @app.route('/home/swimwear/to',methods=['GET','POST'])
 def set_swimwear():
     if request.method == 'POST':
@@ -116,7 +114,7 @@ def set_swimwear():
            add_to_cart.counter = int(it['counter'])
            add_to_cart.url_img = it['url_img']
            temp_price = add_to_cart.price * add_to_cart.counter
-           ord.add_swimwear_list_to_bag(temp_price, add_to_cart)  # the key of self  kepping on list, we call the function
+           ord.add_swimwear_list_to_bag(temp_price, add_to_cart)  
     elif len(list_swimwear_to_html)>0:
          client = get_database()
          db = client['DesignerClothes']
@@ -131,10 +129,14 @@ def set_swimwear():
 
 
 """
-# 1) user click on ticket we send sku to function (dresses or swimwear)
-# 2) we search by sku and GalleryPhotos is display to user,single item 
-# with option to choose color, size, and to add to cart,
-#if add to cart we send to right function (dresses or swimwear) and the list of ordring add it, 
+ set_ticket_swimwear(): and set_ticket_dresses(): use to Display the particular ticket
+ trigger it:
+ 1) user click on img ticket we send sku to function (dresses or swimwear)
+ 2) we search with sku the ticket to display user single item, 
+ item including colors, sizes,photos, price,description and button to add cart,
+if user add to cart we send to set_swimwear(): or  set_dresses(): function
+ and the class Dresses()  or Swimwear() hold the object than 
+ class Ordering() has lists of both of class to add the single object 
 """
 at_list_gallery = []
 @app.route('/home/gallery/photos/swimwear/to',methods=['GET','POST'])
@@ -216,9 +218,7 @@ def send_order_to_database():
     #1 we check if user made login
     #2 we create uniq id order
     #3 we send the order
-    session['user_id'] = 11000
-    user.email = 'yoni.ch@icloud.com'
-    print('send order to')
+   
     if 'user_id' in session:
         if session["user_id"] < 10000 or len(user.email) == 0:
            print('user must verify before the order sent to server')
@@ -227,8 +227,7 @@ def send_order_to_database():
           client = get_database()
           db = client['orders']
           items = db['items']
-          #Cursor = items.find({})
-         # if list(Cursor)==0:
+         
 
           if len(ord.get_dresses_list())>0 or len(ord.get_swimwear_list())>0: #or len(ord.rent_list)>0:
              if ord.get_order_id() == 0:
