@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <style>
+
+
+
+
+       .color-inline{
+  display: inline;
+  width: 20px;
+  height: 20px;
+  border: 0.5px solid #000000;
+   border-radius:100%;
+  color: #ffffff;
+}
+
+
+    </style>
+
+</head>
+<body>
+
+
+
+
+
+
+
+<div class="container" ><!--text-center-->
+  <!--dresses or swimwear is [<main.Dresses object at 0x>]-->
+
+     <div class="float-start">
+
+            <span id="order-id">No Order: {{order_id}}</span>
+     </div>
+
+{%if dresses%}
+    <div class="block-title">
+<div class="block-title-inner" style="background-color:#ffffff">
+<h1 class="small">Dresses</h1>
+</div>
+</div>
+{%endif%}
+
+   {%for at in dresses%}
+ <div class="card " style="margin-top:10px;">
+
+     <div class="row row-cols-6 row-cols-lg-6">
+
+    <div class="col "><!--img  class="card-img-top"-->
+   <img style="height:100%; width:100%;" src="{{at.url_img}}" >
+
+    </div>
+
+    <div class="col" style="padding-top:3%;padding-left:2%"><!--title and des-->
+         <span id="cart-sku-dr" style="display:none">{{at.sku}}</span>
+         <p class="text-left"><span>{{at.title}}</span></p>
+        <p class="font-weight-light">Color:  <button  class="color-inline add-item-color" style=" background-color:{{at.color}}"></button>
+            <span id="cart-color-dr" style="display:none" >{{at.color}}</span></p>
+        <p class="font-weight-light">Size: <span id="cart-size-dr">{{at.size}}</span></p>
+
+    </div>
+
+      <div class="col "><!--sku and color-->
+          <p class="font-weight-light" style="margin-bottom:47%">PRICE </p>
+          <p class="font-weight-normal">
+              <span>₪</span>
+              <span id="cart-price-dr">{{at.price}}</span>
+              </p>
+    </div>
+     <div class="colr"><!--counter-->
+          <p class="font-weight-light" style="margin-bottom:47%">QTY</p>
+          <p class="font-weight-normal ">
+          <span id="cart-counter-dr">{{at.counter}}</span></p>
+    </div>
+
+     <div class="col"><!--price-->
+          <p class="font-weight-light" style="margin-bottom:47%">SUBTOTAL</p>
+          <p class="font-weight-normal ">{{at.price}}</p>
+    </div>
+
+       <div id="cart-delete-dr" class="col" ><!--delete-->
+           <p style="margin-bottom:62%"></p>
+          <img style="cursor:pointer"  width="20" height="20" src="{{url_for('static', filename='icons/x-circle.svg')}}">
+       </div>
+
+    </div> <!--row-cols-1 of row-->
+ </div><!--card-->
+ {%endfor%}
+
+
+{%if swimwear%}
+    <div class="block-title">
+<div class="block-title-inner" style="background-color:#ffffff">
+<h1 class="small">Swimwear</h1>
+</div>
+</div>
+   {%endif%}
+
+
+<!--swimwear-->
+
+   {%for at in swimwear%}
+     <div class="card " style="margin-top:10px;">
+
+    <div class="row row-cols-6 row-cols-lg-6">
+
+
+    <div class="col "><!--img  class="card-img-top"-->
+   <img style="height:100%; width:100%;" src="{{at.url_img}}" >
+
+    </div>
+
+    <div class="col" style="padding-top:3%;padding-left:2%"><!--title and des-->
+         <span id="cart-sku-sw" style="display:none">{{at.sku}}</span>
+         <p class="text-left"><span>{{at.title}}</span></p>
+        <p class="font-weight-light">Color:  <button  class="color-inline add-item-color" style=" background-color:{{at.color}}"></button>
+            <span id="cart-color-sw" style="display:none" >{{at.color}}</span></p>
+        <p class="font-weight-light">Size: <span id="cart-size-sw">{{at.size}}</span></p>
+
+    </div>
+
+      <div class="col "><!--sku and color-->
+          <p class="font-weight-light" style="margin-bottom:47%">PRICE </p>
+          <p class="font-weight-normal">
+              <span>₪</span>
+              <span id="cart-price-sw">{{at.price}}</span>
+              </p>
+    </div>
+     <div class="colr"><!--counter-->
+         <p class="font-weight-light" style="margin-bottom:47%">QTY</p>
+          <p class="font-weight-normal">
+                  <span id="cart-counter-sw">{{at.counter}}</span></p>
+    </div>
+
+     <div class="col"><!--price-->
+          <p class="font-weight-light" style="margin-bottom:47%">SUBTOTAL</p>
+          <p class="font-weight-normal ">{{at.price}}</p>
+    </div>
+
+       <div id="cart-delete-sw" class="col" ><!--delete-->
+           <p style="margin-bottom:62%"></p>
+          <img   width="20" height="20" src="{{url_for('static', filename='icons/bookmark-check-fill.svg')}}">
+       </div>
+
+    </div> <!--row-cols-1 of row-->
+ </div><!--card-->
+ {%endfor%}
+
+
+
+
+{%if dresses or swimwear%}
+
+    <div class="row" style="margin-bottom:2%;margin-top:15px">
+        <div class="col-lg-12 col-md-12 col-sm-12 ">
+       <!--  <p class="font-weight-light">SUBTOTAL: <span class="font-weight-normal total-price">{{total}}</span></p>-->
+     <div class="font-weight-light">TOTAL:   <span class="font-weight-normal total-price">{{total}}</span></div>
+    </div>
+
+        <div class="col-lg-12 col-md-12 col-sm-12 ">
+              <button  class="btn btn-danger" type="button" onclick="location.href='/'">
+        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+           Cancel and Refund Order
+        </button>
+        </div>
+
+   </div>
+
+    {%endfor%}
+</div><!--container-->
+
+
+ <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+</body>
+</html>
