@@ -1,0 +1,103 @@
+
+
+{%for at in single_item%}
+        <div class="row">
+
+          <div class="col-md-12">
+            <div class="section-heading">
+
+              <h1>Single Product</h1>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="product-slider">
+              <div id="slider" class="flexslider">
+                <ul class="slides">
+
+               {%for im in at['url_img']%}<!--get each object that contain array of link img-->
+                   {%for imb in im['img']%}      <!--  get the list of link img in each array of objects-->
+                  <li>
+                    <img  src="{{imb}}" />
+                  </li>
+               {%endfor%}
+             {%endfor%}
+                  <!-- items mirrored twice, total of 12 -->
+                </ul>
+              </div>
+              <div id="carousel" class="flexslider">
+                <ul class="slides">
+
+              {%for im in at['url_img']%}<!--style="height:180px" get each object that contain array of link img-->
+                   {%for imb in im['img']%}      <!--  get the list of link img in each array of objects-->
+                  <li>
+                    <img  src="{{imb}}" />
+                  </li>
+               {%endfor%}
+             {%endfor%}
+                  <!-- items mirrored twice, total of 12 -->
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="right-content">
+              <p id="add-item-sku" style="display:none">{{at['sku']}}</p>
+              <h4 id="add-item-title">{{at['title']}}</h4>
+              <h6><span>Price: ₪</span><span id="add-item-price">{{at['price']}}</span></h6>
+              <p>{{at['descript']}}</p>
+              <span>Available in Stock</span>
+
+                <input id="add-item-cart" name="add-item" type="submit" class="button  btn btn-outline-secondary" value="Add To Card">
+
+              <div class="down-content">
+                <div class="categories">
+
+                     <span>Size: </span>
+                      {%for im in at['sizes'] %}<!--array of object list_gallery-->
+                      <button  class="color-inline add-size" style="background-color:white">
+
+                          <span id="add-single-size" style="margin:1px;"> {{im}}</span>
+                      </button>
+                      {%endfor%}
+
+
+                </div>
+
+                <div class="share">
+
+                     <span>Color: </span>
+              {%for im in at['url_img']%}<!--array usl_img  contain list of objects-->
+                    <!--style=" background-color:{{im['color']}}"-->
+                <button  class="color-inline add-item-color" style="background: url({{im['color']}})" >
+
+                 <span id="gallery-item-color" style="display:none" >{{im['color']}}</span>
+
+                 <span id="search-img" style="display:none">{{im['img'][0]}}</span>
+                </button>
+               <!--the link in index one of color will display in cart -->
+              {%endfor%}
+
+
+                   {%for im in at['fit_size'] %}<!--array of object list_gallery for size-->
+
+                <p class="fit-size-body" style="width:320px" > {{im}}</p>
+                    {%endfor%}
+
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+{%endfor%}
+
+
+
+
+
+    <script src="{{url_for('static', filename='js_single_item/custom.js')}}">  </script>
+    <script src="{{url_for('static', filename='js_single_item/owl.js')}}">  </script>
+    <script src="{{url_for('static', filename='js_single_item/isotope.js')}}">  </script>
+    <script src="{{url_for('static', filename='js_single_item/flex_slider.js')}}">  </script>
+    <script src="{{url_for('static', filename='js_single_item/trigger_single_item.js')}}">  </script>
